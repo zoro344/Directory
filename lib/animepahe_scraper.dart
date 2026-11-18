@@ -106,23 +106,23 @@ class AnimeEpisodePage {
 
 class AnimePaheScraper {
   AnimePaheScraper({Dio? dio})
-      : _dio = dio ?? Dio(
-          BaseOptions(
-            baseUrl: animePaheApi,
-            connectTimeout: const Duration(seconds: 20),
-            receiveTimeout: const Duration(seconds: 25),
-            headers: {
-              'Accept': 'application/json, text/plain, */*',
-              'User-Agent': 'Mozilla/5.0',
-            },
-          ),
-        );
+      : _dio = dio ??
+            Dio(
+              BaseOptions(
+                baseUrl: animePaheApi,
+                connectTimeout: const Duration(seconds: 20),
+                receiveTimeout: const Duration(seconds: 25),
+                headers: {
+                  'Accept': 'application/json, text/plain, */*',
+                  'User-Agent': 'Mozilla/5.0',
+                },
+              ),
+            );
 
   final Dio _dio;
 
-  /// Searches AnimePahe.
+  /// Searches anime.
   ///
-  /// Matches Senpwai's:
   /// GET /api?m=search&q=...&page=...
   Future<AnimeSearchPage> search({
     required String query,
@@ -159,28 +159,36 @@ class AnimePaheScraper {
 
       final items = rawItems
           .whereType<Map>()
-          .map((item) => AnimeResult.fromJson(
-                Map<String, dynamic>.from(item),
-              ))
+          .map(
+            (item) => AnimeResult.fromJson(
+              Map<String, dynamic>.from(item),
+            ),
+          )
           .toList();
 
       return AnimeSearchPage(
         items: items,
-        currentPage: _toInt(json['current_page'], fallback: page),
-        totalPages: _toInt(json['total'], fallback: page),
+        currentPage: _toInt(
+          json['current_page'],
+          fallback: page,
+        ),
+        totalPages: _toInt(
+          json['total'],
+          fallback: page,
+        ),
         perPage: _toInt(json['per_page']),
       );
     } on DioException catch (error) {
       throw AnimePaheException(
-        'Anime search failed: ${error.message ?? error.type.name}',
+        'Anime search failed: '
+        '${error.message ?? error.type.name}',
         statusCode: error.response?.statusCode,
       );
     }
   }
 
-  /// Retrieves one page of episodes for an anime.
+  /// Retrieves one page of episodes.
   ///
-  /// Matches Senpwai's:
   /// GET /api?m=release&id=...&sort=episode_asc&page=...
   Future<AnimeEpisodePage> getEpisodePage({
     required String animeSession,
@@ -213,33 +221,37 @@ class AnimePaheScraper {
 
       final episodes = rawItems
           .whereType<Map>()
-          .map((item) => AnimeEpisode.fromJson(
-                Map<String, dynamic>.from(item),
-              ))
-          .where((episode) =>
-              episode.session.isNotEmpty && episode.number > 0)
+          .map(
+            (item) => AnimeEpisode.fromJson(
+              Map<String, dynamic>.from(item),
+            ),
+          )
+          .where(
+            (episode) =>
+                episode.session.isNotEmpty &&
+                episode.number > 0,
+          )
           .toList();
 
       return AnimeEpisodePage(
         episodes: episodes,
         currentPage: page,
-        // Senpwai's episode-list code reads per_page.
-        // The API may not provide total pages, so don't invent them.
-        totalPages: _toInt(json['last_page'], fallback: page),
+        totalPages: _toInt(
+          json['last_page'],
+          fallback: page,
+        ),
         perPage: _toInt(json['per_page']),
       );
     } on DioException catch (error) {
       throw AnimePaheException(
-        'Episode retrieval failed: ${error.message ?? error.type.name}',
+        'Episode retrieval failed: '
+        '${error.message ?? error.type.name}',
         statusCode: error.response?.statusCode,
       );
     }
   }
 
-  /// Fetches all episode pages.
-  ///
-  /// Uses per_page to determine how many pages are needed.
-  /// Stops when a page is empty or shorter than per_page.
+  /// Fetches all available episode pages.
   Future<List<AnimeEpisode>> getAllEpisodes({
     required String animeSession,
     CancelToken? cancelToken,
@@ -265,7 +277,6 @@ class AnimePaheScraper {
 
       page++;
 
-      // Safety limit against unexpected pagination responses.
       if (page > 500) {
         throw const AnimePaheException(
           'Episode pagination exceeded the safety limit.',
@@ -278,14 +289,27 @@ class AnimePaheScraper {
 
   static Map<String, dynamic> _asMap(dynamic value) {
     if (value is Map<String, dynamic>) return value;
-    if (value is Map) return Map<String, dynamic>.from(value);
-    throw const FormatException('Unexpected API response format.');
+
+    if (value is Map) {
+      return Map<String, dynamic>.from(value);
+    }
+
+    throw const FormatException(
+      'Unexpected API response format.',
+    );
   }
 
-  static int _toInt(dynamic value, {int fallback = 0}) {
+  static int _toInt(
+    dynamic value, {
+    int fallback = 0,
+  }) {
     if (value is int) return value;
     if (value is num) return value.toInt();
-    return int.tryParse(value?.toString() ?? '') ?? fallback;
+
+    return int.tryParse(
+          value?.toString() ?? '',
+        ) ??
+        fallback;
   }
 
   void dispose() {
@@ -307,6 +331,7 @@ class AnimePaheException implements Exception {
     if (statusCode != null) {
       return '$message (HTTP $statusCode)';
     }
+
     return message;
   }
 }
