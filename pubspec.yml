@@ -1,0 +1,35 @@
+name: anime_streaming_app
+description: Anime directory and watch history Flutter app.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # HTTP requests and AnimePahe scraper
+  dio: ^5.7.0
+
+  # Media Kit video player
+  media_kit: ^1.1.11
+  media_kit_video: ^1.2.5
+  media_kit_libs_video: ^1.0.5
+
+  # Local storage for watch history
+  shared_preferences: ^2.3.2
+
+  # App icons
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
