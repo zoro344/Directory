@@ -9,6 +9,9 @@ on:
       - '.github/workflows/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build Android APK
@@ -34,6 +37,13 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Verify Flutter project
+        run: |
+          echo "Checking Flutter project..."
+          test -f pubspec.yaml
+          test -d android
+          echo "Flutter project found."
+
       - name: Get Flutter dependencies
         run: flutter pub get
 
@@ -49,3 +59,4 @@ jobs:
           name: anime-streaming-release-apk
           path: anime_streaming_app/build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
+          retention-days: 14
