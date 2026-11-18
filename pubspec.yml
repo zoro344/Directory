@@ -1,5 +1,5 @@
 name: anime_streaming_app
-description: An anime streaming application built with Flutter.
+description: Anime streaming application built with Flutter.
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -13,7 +13,7 @@ dependencies:
 
   cupertino_icons: ^1.0.8
 
-  # HTTP requests and API communication
+  # Networking
   dio: ^5.8.0+1
 
   # Video playback
@@ -21,19 +21,19 @@ dependencies:
   media_kit_video: ^2.0.1
   media_kit_libs_video: ^1.0.6
 
-  # Local storage
+  # Storage
   shared_preferences: ^2.5.3
 
-  # Image loading and caching
+  # Images
   cached_network_image: ^3.4.1
 
-  # HTML parsing for scraper integration
+  # HTML parsing
   html: ^0.15.6
 
   # State management
   provider: ^6.1.2
 
-  # URL launching
+  # External links
   url_launcher: ^6.3.1
 
 dev_dependencies:
