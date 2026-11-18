@@ -39,10 +39,10 @@ jobs:
 
       - name: Verify Flutter project
         run: |
-          echo "Checking Flutter project..."
           test -f pubspec.yaml
+          test -d lib
           test -d android
-          echo "Flutter project found."
+          echo "Flutter project structure found."
 
       - name: Get Flutter dependencies
         run: flutter pub get
